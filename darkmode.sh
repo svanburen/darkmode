@@ -14,7 +14,7 @@ plistS=~/Library/LaunchAgents/io.github.katernet.darkmode.sunset.plist
 # Set dark mode - Sunrise = off Sunset = on
 darkMode() {
 	case $1 in
-		off) 
+		off)
 			# Disable dark mode
 			osascript -e '
 			tell application id "com.apple.systemevents"
@@ -26,7 +26,7 @@ darkMode() {
 			end tell
 			'
 			if ls /Applications/Alfred*.app >/dev/null 2>&1; then # If Alfred installed
-				osascript -e 'tell application "Alfred 3" to set theme "Alfred"' 2> /dev/null # Set Alfred default theme
+				osascript -e 'tell application "Alfred 3" to set theme "Alfred macOS"' 2> /dev/null # Set Alfred default theme
 			fi
 			if [ -f "$plistR" ] || [ -f "$plistS" ]; then # Prevent uninstaller from continuing
 				# Run solar query on first day of week
@@ -55,7 +55,7 @@ darkMode() {
 			end tell
 			'
 			if ls /Applications/Alfred*.app >/dev/null 2>&1; then
-				osascript -e 'tell application "Alfred 3" to set theme "Alfred Dark"' 2> /dev/null # Set Alfred dark theme
+				osascript -e 'tell application "Alfred 3" to set theme "Alfred macOS Dark"' 2> /dev/null # Set Alfred dark theme
 			fi
 			# Get sunrise launch agent start interval
 			plistRH=$(/usr/libexec/PlistBuddy -c "Print :StartCalendarInterval:Hour" "$plistR" 2> /dev/null)
@@ -81,7 +81,7 @@ solar() {
 	else
 		formatT="%Y-%m-%d %H:%M:%S %z"
 	fi
-    
+
 	# Convert to local time
 	riseTL=$(date -jf "$formatT" "$riseT" +"%H:%M")
 	setTL=$(date -jf "$formatT" "$setT" +"%H:%M")
@@ -217,17 +217,17 @@ if [[ "$timeH" -ge "$riseH" && "$timeH" -lt "$setH" ]]; then
 	# Sunrise
 	if [[ "$timeH" -ge $((riseH+1)) || "$timeM" -ge "$riseM" ]]; then
 		darkMode off
-	# Sunset	
-	elif [[ "$timeH" -ge "$setH" && "$timeM" -ge "$setM" ]] || [[ "$timeH" -le "$riseH" && "$timeM" -lt "$riseM" ]]; then 
+	# Sunset
+	elif [[ "$timeH" -ge "$setH" && "$timeM" -ge "$setM" ]] || [[ "$timeH" -le "$riseH" && "$timeM" -lt "$riseM" ]]; then
 		darkMode on
 	fi
-# Sunset		
+# Sunset
 elif [[ "$timeH" -ge 0 && "$timeH" -lt "$riseH" ]]; then
 	darkMode on
-# Sunrise	
+# Sunrise
 elif [[ "$timeH" -eq "$setH" && "$timeM" -lt "$setM" ]]; then
 	darkMode off
-# Sunset	
+# Sunset
 else
 	darkMode on
 fi
